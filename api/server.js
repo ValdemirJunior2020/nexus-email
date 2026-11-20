@@ -1,4 +1,7 @@
-import 'dotenv/config';
+import { config as loadEnv } from 'dotenv';
+import { fileURLToPath } from 'node:url';
+// Load the API's own .env reliably on Windows and when launched from repo root.
+loadEnv({ path: fileURLToPath(new URL('./.env', import.meta.url)) });
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
