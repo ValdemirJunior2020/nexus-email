@@ -1,5 +1,7 @@
 // Local-only one-time Gmail OAuth authorization helper; never commit generated tokens.
-import 'dotenv/config';
+import { config as loadEnv } from 'dotenv';
+import { fileURLToPath } from 'node:url';
+loadEnv({path:fileURLToPath(new URL('./.env',import.meta.url))});
 import { google } from 'googleapis';
 import http from 'node:http';
 import { randomBytes } from 'node:crypto';
