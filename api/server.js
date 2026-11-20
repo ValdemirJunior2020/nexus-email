@@ -9,7 +9,8 @@ import { google } from 'googleapis';
 import { randomUUID, timingSafeEqual } from 'node:crypto';
 
 const app=express(), PORT=Number(process.env.PORT||8787), MAILBOX=(process.env.MAILBOX||'info@nexusai.com').toLowerCase();
-const DEMO=process.env.DEMO_MODE==='true' && process.env.NODE_ENV!=='production';
+// Local development defaults to demo when no .env exists; production never does.
+const DEMO=process.env.NODE_ENV!=='production' && process.env.DEMO_MODE!=='false';
 const SHEET_ID=process.env.SHEET_ID||'1nxmEvfWe6WcdUX2Wcc3TQ06oMVWz6LMGTtgXwEmDCog';
 const JWT_SECRET=process.env.JWT_SECRET|| (DEMO?'local-demo-only-secret-change-me':undefined);
 if(!JWT_SECRET) throw new Error('JWT_SECRET is required');
