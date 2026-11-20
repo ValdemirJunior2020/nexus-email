@@ -1,6 +1,0 @@
-name = "nexus-email-inbound"
-main = "worker.js"
-compatibility_date = "2026-11-01"
-[vars]
-RENDER_API_URL = "https://nexus-email-api.onrender.com"
-# Run: npx wrangler secret put INBOUND_SECRET
