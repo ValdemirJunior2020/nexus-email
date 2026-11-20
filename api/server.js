@@ -18,7 +18,7 @@ const SHEET_ID=process.env.SHEET_ID||'1nxmEvfWe6WcdUX2Wcc3TQ06oMVWz6LMGTtgXwEmDC
 const JWT_SECRET=process.env.JWT_SECRET|| (DEMO?'local-demo-only-secret-change-me':undefined);
 if(!JWT_SECRET) throw new Error('JWT_SECRET is required');
 if(process.env.NODE_ENV==='production' && (!process.env.ADMIN_PASSWORD_HASH || !process.env.GOOGLE_SERVICE_ACCOUNT_JSON)) throw new Error('ADMIN_PASSWORD_HASH and GOOGLE_SERVICE_ACCOUNT_JSON required in production');
-const allowed=(process.env.CORS_ORIGIN||'http://localhost:5173').split(',').map(s=>s.trim());
+const allowed=(process.env.CORS_ORIGIN||'http://localhost:5173,http://127.0.0.1:5173').split(',').map(s=>s.trim());
 app.disable('x-powered-by');app.use(helmet());app.use(cors({origin:(o,cb)=>!o||allowed.includes(o)?cb(null,true):cb(new Error('CORS denied'))}));app.use(express.json({limit:'180kb'}));
 const limiter=rateLimit({windowMs:15*60*1000,limit:150,standardHeaders:'draft-7',legacyHeaders:false});app.use('/api',limiter);
 const loginLimiter=rateLimit({windowMs:15*60*1000,limit:8,standardHeaders:'draft-7',legacyHeaders:false});
