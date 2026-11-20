@@ -1,6 +1,6 @@
 # Nexus Email
 
-A custom email web app for **info@nexusai.com**, built with React/Vite (Netlify-ready), an Express API (Render), and Google Sheets as the requested database.
+A custom email web app for **nexusai.helpdesk@gmail.com**, built with React/Vite (Netlify-ready), an Express API (Render), and Google Sheets as the requested database.
 
 **Do not deploy the Netlify frontend until local QA is approved.** The frontend has not been deployed by this setup.
 
@@ -56,7 +56,7 @@ Use Resend (or adapt the provider call). Verify **nexusai.com** as a sending dom
 
 ## Receiving email
 
-Configure Cloudflare DNS and **Email Routing** for the domain, create a route for `info@nexusai.com` to an Email Worker based on `cloudflare/worker.js`, and set Worker secret `INBOUND_SECRET` equal to the Render API setting. Configure `RENDER_API_URL` to the actual service URL. Do **not** change active MX records without accounting for existing mail service. The worker intentionally drops binary attachments and HTML; plain text only for this MVP.
+Configure Cloudflare DNS and **Email Routing** for the domain, create a route for `nexusai.helpdesk@gmail.com` to an Email Worker based on `cloudflare/worker.js`, and set Worker secret `INBOUND_SECRET` equal to the Render API setting. Configure `RENDER_API_URL` to the actual service URL. Do **not** change active MX records without accounting for existing mail service. The worker intentionally drops binary attachments and HTML; plain text only for this MVP.
 
 ## Render service
 
@@ -81,3 +81,16 @@ After local approval, create a site from GitHub with **base directory `web`**, b
 - No attachments, rich-text email, thread replies, spam filtering, mailbox import, DKIM signing in-app, or outgoing delivery retries.
 - Never expose Sheets service account JSON, Resend key, JWT secret, or inbound secret to the browser.
 - Use a private repository before adding any proprietary code. Harden and test external delivery before relying on this for business communications.
+
+
+## Gmail OAuth integration (November 2026)
+Mailbox: nexusai.helpdesk@gmail.com. Google Gmail is the source of truth for messages; Google Sheets is an optional indexed copy for reporting. No custom-domain MX, Resend, or Cloudflare inbound Worker is required for Gmail.
+
+1. Create the Gmail account first, then in Google Cloud Console enable **Gmail API**. Configure Google Auth Platform (consent/audience, add this Gmail account as test user if in Testing), create an **OAuth Client ID of type Desktop app**.
+2. Copy the OAuth client ID and client secret into **api/.env** as `GMAIL_CLIENT_ID` and `GMAIL_CLIENT_SECRET`.
+3. In the repository root run `npm run oauth --workspace api`. Open the printed URL, sign in as **nexusai.helpdesk@gmail.com**, and approve Gmail access.
+4. The local terminal prints `GMAIL_REFRESH_TOKEN`. Add it to **api/.env** privately. Never share it or commit it. Gmail scopes include `gmail.modify` and `gmail.send`.
+5. Set `DEMO_MODE=false`, `ADMIN_PASSWORD_HASH` (bcrypt), `JWT_SECRET` (long random value), and Gmail variables in Render to activate production. Add `GOOGLE_SERVICE_ACCOUNT_JSON` and share Sheet with service-account Editor to mirror indexes.
+6. Start the API and frontend locally and test a message to/from another Gmail account before considering Netlify. Local demo still works with `DEMO_MODE=true`.
+
+**OAuth caution:** Google OAuth apps in Testing may issue refresh tokens with a 7-day lifetime for Gmail scopes. Follow Google's verification/production requirements; an unverified public Gmail-integrated app may have restrictions. Do not connect other users' inboxes without meeting applicable Google policies. This is a personal support mailbox integration, not a multi-tenant Gmail service.
